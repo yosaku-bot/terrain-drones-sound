@@ -1,36 +1,84 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-<meta charset="UTF-8">
-<title>AKI Sound Test 2</title>
+    <meta charset="UTF-8">
+    <title>Geometric Mandala</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #050505; /* 深い黒 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        canvas {
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+        }
+    </style>
 </head>
-<body style="background:black;color:white;text-align:center;padding-top:100px;">
+<body>
 
-<h1>タップでランダム音</h1>
+<canvas id="mandalaCanvas"></canvas>
 
 <script>
-document.body.addEventListener("click", () => {
+    const canvas = document.getElementById('mandalaCanvas');
+    const ctx = canvas.getContext('2d');
 
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
+    let width, height, centerX, centerY;
+    let angle = 0;
 
-  // 毎回ランダム周波数
-  const freq = 100 + Math.random() * 1000;
+    function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        centerX = width / 2;
+        centerY = height / 2;
+    }
 
-  osc.frequency.value = freq;
-  osc.type = "square";
+    window.addEventListener('resize', resize);
+    resize();
 
-  gain.gain.value = 0.1;
+    function drawMandala() {
+        // 画面をクリア（少し残像を残す）
+        ctx.fillStyle = 'rgba(5, 5, 5, 0.05)';
+        ctx.fillRect(0, 0, width, height);
 
-  osc.connect(gain);
-  gain.connect(ctx.destination);
+        const petals = 12; // 花びらの数（対称軸）
+        const radius = 200;
 
-  osc.start();
-  setTimeout(() => osc.stop(), 200);
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(angle);
 
-});
+        for (let i = 0; i < petals; i++) {
+            ctx.rotate((Math.PI * 2) / petals);
+            
+            // 幾何学図形の描画
+            drawShape(0, 0, i);
+        }
+
+        ctx.restore();
+        angle += 0.01; // 回転速度
+        requestAnimationFrame(drawMandala);
+    }
+
+    function drawShape(x, y, index) {
+        ctx.beginPath();
+        ctx.strokeStyle = `hsla(${index * 30 + angle * 50}, 70%, 60%, 0.8)`;
+        ctx.lineWidth = 2;
+
+        // 複雑な幾何学模様を作るための数式
+        // 円弧を組み合わせて模様を作る
+        ctx.arc(100, 0, 80, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.rect(50, 50, 40, 40);
+        ctx.stroke();
+    }
+
+    drawMandala();
 </script>
-
 </body>
 </html>
