@@ -1,36 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>AKI Sound Lab</title>
+<meta charset="UTF-8">
+<title>AKI Sound Test 2</title>
 </head>
-<body style="background:black; color:lime; font-family:monospace; text-align:center; padding-top:100px;">
+<body style="background:black;color:white;text-align:center;padding-top:100px;">
 
-  <h1>🌍 四国EDM 実験</h1>
-  <p>クリック位置で音が変わる</p>
+<h1>タップでランダム音</h1>
 
-  <script>
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+<script>
+document.body.addEventListener("click", () => {
 
-    document.body.addEventListener("click", (e) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
 
-      // 画面の横位置を周波数に変換
-      const freq = 100 + (e.clientX / window.innerWidth) * 800;
+  // 毎回ランダム周波数
+  const freq = 100 + Math.random() * 1000;
 
-      osc.type = "sawtooth";
-      osc.frequency.value = freq;
+  osc.frequency.value = freq;
+  osc.type = "square";
 
-      gain.gain.value = 0.1;
+  gain.gain.value = 0.1;
 
-      osc.connect(gain);
-      gain.connect(ctx.destination);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
 
-      osc.start();
-      setTimeout(() => osc.stop(), 200);
-    });
-  </script>
+  osc.start();
+  setTimeout(() => osc.stop(), 200);
+
+});
+</script>
 
 </body>
 </html>
