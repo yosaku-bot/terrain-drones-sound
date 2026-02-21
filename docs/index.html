@@ -1,84 +1,66 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>Geometric Mandala</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background-color: #050505; /* 深い黒 */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        canvas {
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
-        }
-    </style>
-</head>
-<body>
+// --- 以下を <script> の中に貼り付けてください ---
 
-<canvas id="mandalaCanvas"></canvas>
+const canvas = document.getElementById('mandalaCanvas');
+const ctx = canvas.getContext('2d');
 
-<script>
-    const canvas = document.getElementById('mandalaCanvas');
-    const ctx = canvas.getContext('2d');
+let width, height, centerX, centerY;
+let angle = 0;
 
-    let width, height, centerX, centerY;
-    let angle = 0;
+function resize() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+    centerX = width / 2;
+    centerY = height / 2;
+}
 
-    function resize() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-        centerX = width / 2;
-        centerY = height / 2;
-    }
+window.addEventListener('resize', resize);
+resize();
 
-    window.addEventListener('resize', resize);
-    resize();
+function drawMandala() {
+    // 画面を少しずつ暗くして残像を作る
+    ctx.fillStyle = 'rgba(5, 5, 5, 0.1)';
+    ctx.fillRect(0, 0, width, height);
 
-    function drawMandala() {
-        // 画面をクリア（少し残像を残す）
-        ctx.fillStyle = 'rgba(5, 5, 5, 0.05)';
-        ctx.fillRect(0, 0, width, height);
+    const petals = 8; // 対称軸の数
 
-        const petals = 12; // 花びらの数（対称軸）
-        const radius = 200;
+    ctx.save();
+    ctx.translate(centerX, centerY);
 
+    for (let i = 0; i < petals; i++) {
         ctx.save();
-        ctx.translate(centerX, centerY);
-        ctx.rotate(angle);
-
-        for (let i = 0; i < petals; i++) {
-            ctx.rotate((Math.PI * 2) / petals);
-            
-            // 幾何学図形の描画
-            drawShape(0, 0, i);
-        }
-
+        ctx.rotate((Math.PI * 2 / petals) * i);
+        
+        // リサージュ図形を描画
+        drawLissajous(angle, i);
+        
         ctx.restore();
-        angle += 0.01; // 回転速度
-        requestAnimationFrame(drawMandala);
     }
 
-    function drawShape(x, y, index) {
-        ctx.beginPath();
-        ctx.strokeStyle = `hsla(${index * 30 + angle * 50}, 70%, 60%, 0.8)`;
-        ctx.lineWidth = 2;
+    ctx.restore();
+    angle += 0.02; // アニメーションの速度
+    requestAnimationFrame(drawMandala);
+}
 
-        // 複雑な幾何学模様を作るための数式
-        // 円弧を組み合わせて模様を作る
-        ctx.arc(100, 0, 80, 0, Math.PI * 2);
-        ctx.stroke();
+function drawLissajous(t, index) {
+    ctx.beginPath();
+    // 虹色に変化させる
+    ctx.strokeStyle = `hsla(${index * 45 + t * 50}, 80%, 60%, 0.6)`;
+    ctx.lineWidth = 1.5;
 
-        ctx.beginPath();
-        ctx.rect(50, 50, 40, 40);
-        ctx.stroke();
+    // リサージュ図形のパラメータ
+    const a = 3; // 横の周波数
+    const b = 2; // 縦の周波数
+    const size = 150; // 図形の大きさ
+
+    for (let i = 0; i <= Math.PI * 2; i += 0.1) {
+        // リサージュの公式: x = sin(at + δ), y = sin(bt)
+        const x = Math.sin(a * i + t) * size;
+        const y = Math.sin(b * i) * size;
+        
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
     }
+    ctx.stroke();
+}
 
-    drawMandala();
-</script>
-</body>
-</html>
+drawMandala();
