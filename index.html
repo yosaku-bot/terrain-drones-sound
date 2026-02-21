@@ -1,27 +1,3 @@
-<script type="module">
-import * as je from "https://cdn.jsdelivr.net/gh/jaxa-earth/je@latest/dist/je.min.js";
-
-async function main() {
-  const dataObject = await je.getDataObject({
-    collectionUrl:
-      "https://s3.ap-northeast-1.wasabisys.com/je-pds/public/aw3d30/latest",
-    bbox: [133, 32, 135, 34], // 四国
-    width: 800,
-    height: 600,
-  });
-
-  const colorMap = new je.image.ColorMap({
-    min: 0,
-    max: 2000,
-    colors: je.Colors.JET,
-  });
-
-  const canvas = await je.image.createCanvas(dataObject, {
-    colorMap: colorMap,
-  });
-
-  document.body.appendChild(canvas);
-}
-
-main();
+<script>
+document.body.innerHTML += "<p>JSは動いている</p>";
 </script>
